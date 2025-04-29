@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# environment variables
+.env
+
+# logs
+logs/
+*.log
+
+# build output
+dist/
+build/
+
+# OS + editor files
+.DS_Store
+.vscode/
+.idea/
+
+
+# cloudinary
+uploads/
