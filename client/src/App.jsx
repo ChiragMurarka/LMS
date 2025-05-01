@@ -26,6 +26,8 @@ import PurchaseCourseProtectedRoute from './components/PurchaseCourseProtectedRo
 import ErrorBoundary from './components/ErrorBoundary'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
+const GOOGLE_CLIENT_ID=import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
 
 const appRouter = createBrowserRouter([
   {
@@ -44,7 +46,7 @@ const appRouter = createBrowserRouter([
       {
         path: "login",
         element: <AuthenticatedUser>
-          <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
+          <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
             <Login />
           </GoogleOAuthProvider>
         </AuthenticatedUser>
