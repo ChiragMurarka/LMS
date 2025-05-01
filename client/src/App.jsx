@@ -44,7 +44,7 @@ const appRouter = createBrowserRouter([
       {
         path: "login",
         element: <AuthenticatedUser>
-          <GoogleOAuthProvider clientId="223648995082-irc7vm1fqv88u4esmfl78pqrnse855vk.apps.googleusercontent.com">  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
+          <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
             <Login />
           </GoogleOAuthProvider>
         </AuthenticatedUser>
