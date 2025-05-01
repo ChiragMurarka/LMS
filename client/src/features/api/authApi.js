@@ -25,7 +25,7 @@ export const authApi=createApi({
             async onQueryStarted(arg,{queryFulfilled,dispatch}){
                 try {
                     const result =await queryFulfilled;
-                    dispatch(userLoggedIn({user:result.data.user}));
+                    dispatch(userLoggedIn({user:result.data.user}));           //this result is response sent by server
                 } catch (error) {
                     console.log(error);
                 }
@@ -39,6 +39,7 @@ export const authApi=createApi({
             async onQueryStarted(arg,{queryFulfilled,dispatch}){
                 try {
                     const result =await queryFulfilled;
+                    console.log(result.data)
                     dispatch(userLoggedIn({user:result.data.user}));    //restore the store with user and isauthenticated
                 } catch (error) {
                     console.log(error);
@@ -65,7 +66,22 @@ export const authApi=createApi({
                     console.log(error);
                 }
             }
-        })           
+        }),
+        googleLoginUser:builder.mutation({
+            query:({code})=>({
+                url:`auth/login?code=${code}`,
+                method:"POST"
+            }),
+            async onQueryStarted(arg,{queryFulfilled,dispatch}){
+                try {
+                    const result =await queryFulfilled;
+                    console.log(result);
+                    dispatch(userLoggedIn({user:result.data.user}));           //this result is response sent by server
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        })          
     })
 });
 
@@ -74,5 +90,6 @@ export const {
     useLoginUserMutation,
     useLoadUserQuery,
     useUpdateUserMutation,
-    useLogoutUserMutation
+    useLogoutUserMutation ,
+    useGoogleLoginUserMutation
 }=authApi;

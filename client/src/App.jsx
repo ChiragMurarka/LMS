@@ -24,12 +24,14 @@ import { AdminRoute, AuthenticatedUser, ProtectedRoute } from './components/Prot
 import { Toaster } from 'sonner'
 import PurchaseCourseProtectedRoute from './components/PurchaseCourseProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+
 
 const appRouter = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
-    errorElement:<ErrorBoundary/>,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         path: "/",
@@ -41,7 +43,11 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "login",
-        element:<AuthenticatedUser><Login /></AuthenticatedUser> 
+        element: <AuthenticatedUser>
+          <GoogleOAuthProvider clientId="223648995082-irc7vm1fqv88u4esmfl78pqrnse855vk.apps.googleusercontent.com">  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
+            <Login />
+          </GoogleOAuthProvider>
+        </AuthenticatedUser>
       },
       {
         path: "my-learning",
@@ -61,12 +67,12 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "course-progress/:courseId",
-        element: 
-                <ProtectedRoute>
-                  
-                    <CourseProgress />
-                 
-                </ProtectedRoute>
+        element:
+          <ProtectedRoute>
+
+            <CourseProgress />
+
+          </ProtectedRoute>
       },
 
       //admin routes 
@@ -105,6 +111,7 @@ const appRouter = createBrowserRouter([
   }
 ])
 function App() {
+
 
   return (
     <main>

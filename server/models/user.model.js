@@ -11,8 +11,15 @@ const userSchema=new mongoose.Schema({
     },
     password:{
         type:String,
-        required:true
+        required:function(){
+            return !this.googleId;      //password required  only when not Google User
+        }
     },
+    googleId:{
+        type:String,
+        default:null
+    }
+    ,
     role:{
         type:String,
         enum:["instructor","student"],
