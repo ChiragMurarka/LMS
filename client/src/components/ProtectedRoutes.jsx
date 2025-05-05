@@ -1,6 +1,8 @@
+import { useGetCourseDetailsWithPurchaseStatusQuery } from "@/features/api/coursePurchaseApi";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux"
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
+import LoadingSpinner from "./LoadingSpinner";
 
 export const ProtectedRoute=({children})=>{
     const {isAuthenticated}=useSelector(store=>store.auth);
@@ -12,7 +14,34 @@ export const ProtectedRoute=({children})=>{
     return children;
 }
 
+export const CoursePurchased=({children})=>{
+  const {isAuthenticated}=useSelector(store=>store.auth);
 
+  const params=useParams();
+  const {courseId}=params;
+
+  if(!isAuthenticated){
+    return <Navigate to="/login/"/>
+  }
+
+  const { data, isLoading, isError, refetch } = useGetCourseDetailsWithPurchaseStatusQuery({courseId});
+
+
+  if(isLoading){
+    return <LoadingSpinner/>
+  }
+  if(isError){
+    return <h1>Error getting Course Progress</h1>
+  }
+
+  const coursePurchased =data?.purchased;
+  console.log(data);
+  if (!coursePurchased) {
+    return <Navigate to={`/course-details/${courseId}`} />;
+  }
+  
+  return children ;
+}
 
 
 export const AuthenticatedUser = ({ children }) => {

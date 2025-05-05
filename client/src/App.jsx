@@ -20,13 +20,13 @@ import EditLecture from './pages/admin/lecture/EditLecture'
 import CourseDetail from './pages/student/CourseDetail'
 import CourseProgress from './pages/student/CourseProgress'
 import SearchPage from './pages/student/SearchPage'
-import { AdminRoute, AuthenticatedUser, ProtectedRoute } from './components/ProtectedRoutes'
+import { AdminRoute, AuthenticatedUser, CoursePurchased, ProtectedRoute } from './components/ProtectedRoutes'
 import { Toaster } from 'sonner'
 import PurchaseCourseProtectedRoute from './components/PurchaseCourseProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
-const GOOGLE_CLIENT_ID=import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 
 const appRouter = createBrowserRouter([
@@ -70,11 +70,9 @@ const appRouter = createBrowserRouter([
       {
         path: "course-progress/:courseId",
         element:
-          <ProtectedRoute>
-
+          <CoursePurchased>
             <CourseProgress />
-
-          </ProtectedRoute>
+          </CoursePurchased>
       },
 
       //admin routes 
