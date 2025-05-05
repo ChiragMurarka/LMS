@@ -53,7 +53,9 @@ const Profile = () => {
     },[error,updateUserData ,isSuccess,isError])
     
     
-    
+    useEffect(()=>{
+        setName(user.name);
+    },[user])
 
     if(isLoading)
         return <><LoadingSpinner/></>
