@@ -7,27 +7,69 @@ import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { useCreateMessageMutation, useGetCourseMessagesQuery } from '@/features/api/messageApi'
 import { MessageCircleWarning, Send, SendHorizonal } from 'lucide-react'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { socket } from '../../socket.js'
+import { useGetCourseByIdQuery, useGetCourseQuery } from '@/features/api/courseApi'
+import { useSelector } from 'react-redux'
 
 const Discussion = () => {
 
-  const tags = Array.from({ length: 50 }).map(
-    (_, i, a) => `v1.2.0-beta.${a.length - i}`
-  )
+  const params = useParams();
+  const courseId = params.courseId;
+  const userId = params.userId;
 
-  const messages = [{
-    message: "Hello", user: "Chirag", role: "Instructor"
-  }, {
-    message: "Hi", user: "Ashpreet", role: "Student"
-  }]
+  const [input, setInput] = useState("");
+  const [newMessages, setNewMessages] = useState([]);
+
+  const scrollEndRef=useRef(null);//for scrolling after new chat is sent
+ 
+
+
+
+  const [createMessage, { data, isLaoding, isSuccess }] = useCreateMessageMutation();
+
+  const { data: getMessagesData, isLoading: getCourseMessageIsLoading, isSuccess: getCourseMessageIsSuccess, refetch } = useGetCourseMessagesQuery({ courseId });
+
+  useEffect(() => {
+    socket.on('receiveMessage', (msg) => {                              //receiving messages sent over connection
+      setNewMessages((prev) => [...prev, msg]);
+    });
+    return () => socket.off('receiveMessage');
+  }, []);
+
+
+  const sendMessageHandler = () => {
+    if (input) {
+      socket.emit("sendMessage", {                                    //sending message to connection
+        userId,
+        message: input,
+        courseId
+      });
+      setInput("");
+    }
+  };
+
+
+
+
+
+  const messages = [...(getMessagesData?.message ?? []), ...newMessages].sort(
+    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  );
+
+   useEffect(() => {
+    scrollEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const isTyping = true;
   return (
-    <div className='pt-20 flex justify-center'>
-      <Card className="w-[550px] h-[550px] flex flex-col">
+    <div className='pt-11 flex justify-center'>
+      <Card className="w-[600px] h-[600px] flex flex-col">
         <CardHeader>
-          <CardTitle>Discussion Forum</CardTitle>
+          {/* <CardTitle>Discussion Forum</CardTitle> */}
           <CardDescription className="text-red-700">
             <div className='flex items-center'>
               <MessageCircleWarning></MessageCircleWarning>
@@ -38,56 +80,75 @@ const Discussion = () => {
         <CardContent className="flex-1 flex-col overflow-hidden">
           <ScrollArea className="h-full w-full">
             <div>
-              {messages.map((message) => (
-                message.user === "Chirag" ?
-                  <>
-                    <div key={message} className="inline-block text-sm bg-gray-200 rounded-md p-2 pl-3">
-                      <div className='flex flex-col gap-2'>
-                        <div className='flex gap-2 justify-center'>
-                          <Avatar className="h-6 w-6 md:h-6 md:w-6">
-                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                            <AvatarFallback>CN</AvatarFallback>
-                          </Avatar>
-                          <span className='font-semibold text-base'>{message.user}</span>
-                          <Badge className="bg">{message.role}</Badge>
-                        </div>
-                        <div className='text-semibold'>
-                          {message.message}
-                        </div>
-                      </div>
-                    </div>
-                    <div className='mt-2'></div>
-                  </> :
-                  <>
-                    <div key={message} className="flex justify-end">
-                      <div key={message} className="inline-block text-sm bg-gray-200 rounded-md p-2 pl-3">
-                        <div className='flex flex-col gap-2'>
-                          <div className='flex gap-2 justify-center'>
+              {messages?.map((message) => (
+                <div key={message._id}>
+                  {message?.userId._id !== userId ? (
+                    <>
+                      <div className="inline-block text-sm bg-blue-200 dark:bg-blue-800 rounded-md p-2 pl-3">
+                        <div className='flex flex-col'>
+                          <div className='flex gap-2 items-center'>
                             <Avatar className="h-6 w-6 md:h-6 md:w-6">
-                              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                              <AvatarImage src={message.userId.photoUrl} alt="@shadcn" />
                               <AvatarFallback>CN</AvatarFallback>
                             </Avatar>
-                            <span className='font-semibold text-base'>{message.user}</span>
-                            <Badge className="bg">{message.role}</Badge>
+                            <span className='font-semibold text-base '>{message.userId.name}</span>
+                            <Badge className="bg">{message.userId.role}</Badge>
                           </div>
-                          <div className='text-base'>
+                          <div className='text-semibold max-w-[450px] break-words'>
                             {message.message}
+                          </div>
+                          <div className="text-right">
+                            {new Date(message.createdAt).toLocaleString()}
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="mt-2"></div>
-                  </>
+                      <div className='mt-6'></div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-end">
+                        <div className="inline-block text-sm bg-green-200 dark:bg-green-800 rounded-md p-2 pl-3">
+                          <div className='flex flex-col'>
+                            <div className='flex gap-2 items-center'>
+                              <Avatar className="h-6 w-6 md:h-6 md:w-6">
+                                <AvatarImage src={message.userId.photoUrl} alt="@shadcn" />
+                                <AvatarFallback>CN</AvatarFallback>
+                              </Avatar>
+                              <span className='font-semibold text-base'>{message.userId.name}</span>
+                              <Badge className="bg">{message?.userId?.role}</Badge>
+                            </div>
+                            <div className='text-base max-w-[450px] break-words'>
+                              {message.message}
+                            </div>
+                            <div className="text-right">
+                              {new Date(message.createdAt).toLocaleString()}
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-6"></div>
+                    </>
+                  )}
+                </div>
               ))}
             </div>
+            <div ref={scrollEndRef}></div>
           </ScrollArea>
-          {
-            isTyping ? (<div className='pl-1'>Chirag is Typing...</div>) : (<div></div>)
-          }
         </CardContent>
         <CardFooter className="flex pt-2 ">
-          <Input placeholder="Type your message here" className="rounded-r-none focus:outline-none"></Input>
-          <Button className="rounded-l-none"><Send /></Button>
+          <Input
+            placeholder="Type your message here"
+            className="rounded-r-none focus:outline-none"
+            onChange={(e) => setInput(e.target.value)}
+            type="text"
+            value={input}
+            onKeyDown={(e) => {
+              if (e.key === "Enter")
+                sendMessageHandler()
+            }}
+          />
+          <Button className="rounded-l-none" onClick={() => sendMessageHandler()}><Send /></Button>
         </CardFooter>
       </Card>
     </div>

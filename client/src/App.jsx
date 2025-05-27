@@ -78,7 +78,7 @@ const appRouter = createBrowserRouter([
           </CoursePurchased>
       },
       {
-        path:"discussion-forum/:courseId",
+        path:"discussion-forum/:courseId/user/:userId",
         element:
         <CoursePurchased>
           <Discussion/>

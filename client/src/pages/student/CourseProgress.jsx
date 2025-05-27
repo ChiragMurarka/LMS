@@ -6,12 +6,14 @@ import { useGetCourseProgressQuery, useMarkAsCompletedMutation, useMarkAsInCompl
 import { current } from '@reduxjs/toolkit';
 import { CheckCircle2, CirclePlay, MessageCircleCode, XCircleIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const CourseProgress = () => {
     const params = useParams();
     const courseId = params.courseId;
+    const {user}=useSelector(store=>store.auth);
     const { data, isLoading, isError, refetch } = useGetCourseProgressQuery({ courseId });
     const [markAsCompleted, { isError: isErr, error, data: completedData, isSuccess: isCompletedSuccess }] = useMarkAsCompletedMutation();
     const [markAsIncomplete, { data: incompletedData, isSuccess: isIncompletedSuccess }] = useMarkAsInCompleteMutation();
@@ -87,15 +89,15 @@ const CourseProgress = () => {
 
 
     const navigate = useNavigate();
-    return (
+    return (    
         <div className='max-w-7xl mx-auto p-4 mt-20'>
             {/*Display Course name*/}
             <div className='flex justify-between mb-4'>
                 <h1 className='text-2xl font-bold'>{courseDetails.courseTitle}</h1>
                 <div className='flex gap-3'>
                     <div>
-                        <Button onClick={() => navigate(`/discussion-forum/${courseId}`)}>
-                            <MessageCircleCode className='text-white' />
+                        <Button onClick={() => navigate(`/discussion-forum/${courseId}/user/${user._id}`)}>
+                            <MessageCircleCode/>
                             <span>Discussion Forum</span>
                         </Button>
                     </div>

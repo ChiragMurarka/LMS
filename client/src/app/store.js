@@ -4,12 +4,19 @@ import { authApi } from "@/features/api/authApi";
 import { courseApi } from "@/features/api/courseApi.js";
 import { coursePurchaseApi } from "@/features/api/coursePurchaseApi.js";
 import { courseProgressApi } from "@/features/api/courseProgressApi.js";
+import { messageApi } from "@/features/api/messageApi.js";
 
 
 
 export const appStore = configureStore({
     reducer:rootReducer,
-    middleware:(defaultMiddleWare)=>defaultMiddleWare().concat(authApi.middleware, courseApi.middleware ,coursePurchaseApi.middleware ,courseProgressApi.middleware)
+    middleware:(defaultMiddleWare)=>defaultMiddleWare().concat(
+        authApi.middleware, 
+        courseApi.middleware ,
+        coursePurchaseApi.middleware ,
+        courseProgressApi.middleware,
+        messageApi.middleware
+    )
 });
 
 

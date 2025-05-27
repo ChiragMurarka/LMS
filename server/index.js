@@ -7,8 +7,13 @@ import cors from "cors";
 import courseRoute from "./routes/course.route.js"
 import mediaRoute from "./routes/media.route.js"
 import coursePurchase from "./routes/coursePurchase.route.js"
+import messageRoute from "./routes/messages.route.js"
 import Razorpay from "razorpay";
 import courseProgressRoute from "./routes/courseProgress.route.js"
+import http from 'http'
+import { Server } from "socket.io";
+import { Message } from "./models/messages.model.js";
+
 
 dotenv.config(); //dotenv configuration for getting PORT and MONGO_URI from .env file
 
@@ -23,6 +28,32 @@ export const instance = new Razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
     key_secret: process.env.RAZORPAY_API_SECRET,
   });
+
+const server=http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"]
+  }
+});
+
+
+
+//Socket IO
+io.on('connection', (socket) => {
+  console.log('User connected');
+
+  socket.on('sendMessage', async ({userId,message,courseId}) => {
+    const saved = (await Message.create({userId,message,courseId}));
+    await saved.populate("userId");
+    
+    io.emit('receiveMessage', saved);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
 
 
 
@@ -41,6 +72,11 @@ app.use("/api/v1/user",userRoute);//middleware  eg http://localhost:8080/api/v1/
 app.use("/api/v1/course",courseRoute);
 app.use("/api/v1/purchase",coursePurchase);
 app.use("/api/v1/progress",courseProgressRoute);
+app.use("/api/v1/message",messageRoute)        ;
+
+
+
+
 
 
 /*app.get("/home",(req,res)=>{
@@ -50,6 +86,7 @@ app.use("/api/v1/progress",courseProgressRoute);
     })
 })*/
 
-app.listen(PORT, () => {
-    console.log(`Server listening at port ${PORT}`);
+server.listen(PORT, () => {
+    console.log(`Server + Socket.IO listening at port ${PORT}`);
 });
+
