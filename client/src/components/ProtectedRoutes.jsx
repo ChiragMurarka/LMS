@@ -20,12 +20,12 @@ export const CoursePurchased=({children})=>{
   const params=useParams();
   const {courseId}=params;
 
+  
+  const { data, isLoading, isError, refetch } = useGetCourseDetailsWithPurchaseStatusQuery({courseId});
+  
   if(!isAuthenticated){
     return <Navigate to="/login/"/>
   }
-
-  const { data, isLoading, isError, refetch } = useGetCourseDetailsWithPurchaseStatusQuery({courseId});
-
 
   if(isLoading){
     return <LoadingSpinner/>
