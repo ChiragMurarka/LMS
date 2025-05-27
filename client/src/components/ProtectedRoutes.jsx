@@ -52,8 +52,8 @@ export const AuthenticatedUser = ({ children }) => {
       if (isAuthenticated) {
         setTimeout(() => {
           setShouldRedirect(true);
-        },1);                       //1ms fake delay is added because what was happening is that when we login
-                                    //it comes here and this becomes true 
+        });                       
+                                    
       }
     }, [isAuthenticated]);
   

@@ -4,17 +4,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { useGetCourseProgressQuery, useMarkAsCompletedMutation, useMarkAsInCompleteMutation, useUpdateLectureProgressMutation } from '@/features/api/courseProgressApi';
 import { current } from '@reduxjs/toolkit';
-import { CheckCircle2, CirclePlay, XCircleIcon } from 'lucide-react';
+import { CheckCircle2, CirclePlay, MessageCircleCode, XCircleIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const CourseProgress = () => {
     const params = useParams();
     const courseId = params.courseId;
     const { data, isLoading, isError, refetch } = useGetCourseProgressQuery({ courseId });
-    const [markAsCompleted,{isError:isErr,error ,data:completedData ,isSuccess:isCompletedSuccess}]=useMarkAsCompletedMutation();
-    const [markAsIncomplete ,{data:incompletedData    ,isSuccess:isIncompletedSuccess}]=useMarkAsInCompleteMutation();
+    const [markAsCompleted, { isError: isErr, error, data: completedData, isSuccess: isCompletedSuccess }] = useMarkAsCompletedMutation();
+    const [markAsIncomplete, { data: incompletedData, isSuccess: isIncompletedSuccess }] = useMarkAsInCompleteMutation();
     const [updateLectureProgress] = useUpdateLectureProgressMutation();
 
 
@@ -25,26 +25,27 @@ const CourseProgress = () => {
 
 
 
-    
-    useEffect(()=>{
-        if(isErr){
-            toast.error(error.data.message||"Complete atleast one Video to mark completed")
+
+    useEffect(() => {
+        if (isErr) {
+            toast.error(error.data.message || "Complete atleast one Video to mark completed")
         }
-        if(isCompletedSuccess){
+        if (isCompletedSuccess) {
             toast.success(completedData.message);
         }
-    },[isErr,error,isCompletedSuccess])
+    }, [isErr, error, isCompletedSuccess])
 
-    useEffect(()=>{
-        if(isIncompletedSuccess){
+    useEffect(() => {
+        if (isIncompletedSuccess) {
             toast.error(incompletedData.message);
         }
-    },[isIncompletedSuccess])
+    }, [isIncompletedSuccess])
 
 
     //useEffect is always before return any jsx and all otherwise render more hooks than previous hooks error
 
-    if (isLoading) return <LoadingSpinner />
+    
+    if (isLoading ) return <LoadingSpinner />
     if (isError) return <p>Failed to load course details</p>
 
     console.log(data);
@@ -53,7 +54,7 @@ const CourseProgress = () => {
     const { courseTitle } = courseDetails;
 
 
-    const initialLecture = currentLecture || courseDetails.lectures && courseDetails.lectures[0];
+    const initialLecture = currentLecture || courseDetails?.lectures && courseDetails?.lectures[0];
 
 
     //this .some() finds atleast one matching in array accroding to given condition
@@ -67,35 +68,43 @@ const CourseProgress = () => {
     }
 
     const handleSelectLecture = (lecture) => {
-        setCurrentLecture(lecture);             
+        setCurrentLecture(lecture);
         //handleLectureProgress(lecture._id);
-      };
+    };
 
-    const markCompleteHandler=async()=>{
-        await markAsCompleted({courseId:courseDetails._id});
+    const markCompleteHandler = async () => {
+        await markAsCompleted({ courseId: courseDetails._id });
         refetch();
     }
 
-    const markInCompleteHandler=async()=>{
-        await markAsIncomplete({courseId:courseDetails._id});
+    const markInCompleteHandler = async () => {
+        await markAsIncomplete({ courseId: courseDetails._id });
         refetch();
     }
 
-    
 
 
-    
 
+
+    const navigate = useNavigate();
     return (
         <div className='max-w-7xl mx-auto p-4 mt-20'>
             {/*Display Course name*/}
             <div className='flex justify-between mb-4'>
                 <h1 className='text-2xl font-bold'>{courseDetails.courseTitle}</h1>
-                {
-                    !completed?(<Button className="hover:bg-green-400" onClick={markCompleteHandler}><CheckCircle2 className='text-white'/><span>Completed</span></Button>):
-                    (<Button className="hover:bg-red-600" onClick={markInCompleteHandler}><XCircleIcon className='text-white'/><span>Incomplete</span></Button>)
-                }
-            </div>  
+                <div className='flex gap-3'>
+                    <div>
+                        <Button onClick={() => navigate(`/discussion-forum/${courseId}`)}>
+                            <MessageCircleCode className='text-white' />
+                            <span>Discussion Forum</span>
+                        </Button>
+                    </div>
+                    {
+                        !completed ? (<Button className="hover:bg-green-400" onClick={markCompleteHandler}><CheckCircle2 className='text-white' /><span>Completed</span></Button>) :
+                            (<Button className="hover:bg-red-600" onClick={markInCompleteHandler}><XCircleIcon className='text-white' /><span>Incomplete</span></Button>)
+                    }
+                </div>
+            </div>
             <div className='flex flex-col md:flex-row gap-6'>
                 {/* video section */}
                 <div className='flex-1 md:w-3/5 h-fit rounded-lg shadow-lg p-4'>

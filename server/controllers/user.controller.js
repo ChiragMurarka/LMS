@@ -21,6 +21,7 @@ export const register = async (req, res) => {
                 message: "User already exists with this email"
             })
         }
+        
         const hashedPassword = await bcrypt.hash(password, 10);//password is hashed deafult salt length is 10npm
         await User.create({
             name,  //this is equal to name:name when same dont need to write both

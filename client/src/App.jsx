@@ -25,6 +25,9 @@ import { Toaster } from 'sonner'
 import PurchaseCourseProtectedRoute from './components/PurchaseCourseProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import Discussion from './pages/student/Discussion'
+import Course from './pages/student/Course'
+import { Disc } from 'lucide-react'
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -73,6 +76,13 @@ const appRouter = createBrowserRouter([
           <CoursePurchased>
             <CourseProgress />
           </CoursePurchased>
+      },
+      {
+        path:"discussion-forum/:courseId",
+        element:
+        <CoursePurchased>
+          <Discussion/>
+        </CoursePurchased>
       },
 
       //admin routes 
