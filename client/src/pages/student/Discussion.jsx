@@ -69,7 +69,7 @@ const Discussion = () => {
     <div className='pt-11 flex justify-center'>
       <Card className="w-[600px] h-[600px] flex flex-col">
         <CardHeader>
-          {/* <CardTitle>Discussion Forum</CardTitle> */}
+          <CardTitle>Discussion Forum</CardTitle>
           <CardDescription className="text-red-700">
             <div className='flex items-center'>
               <MessageCircleWarning></MessageCircleWarning>

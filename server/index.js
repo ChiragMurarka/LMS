@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
 
   socket.on('sendMessage', async ({userId,message,courseId}) => {
     const saved = (await Message.create({userId,message,courseId}));
-    await saved.populate("userId");
+    await saved.populate("userId");//populate because we need photourl name and role 
     
     io.emit('receiveMessage', saved);
   });

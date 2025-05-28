@@ -84,7 +84,7 @@ const CourseProgress = () => {
                 <h1 className='text-2xl font-bold'>{courseTitle}</h1>
                 <div className='flex gap-3'>
                     <div>
-                        <Button onClick={() => navigate(`/discussion-forum/${courseId}/user/${user._id}`)}>
+                        <Button onClick={() => navigate(`/discussion-forum/${courseId}/user/${user._id}`)} className="hover:bg-gradient-to-r from-blue-700 via-blue-800 to-purple-800">
                             <MessageCircleCode />
                             <span>Discussion Forum</span>
                         </Button>
@@ -92,7 +92,7 @@ const CourseProgress = () => {
                     {
                         !completed ? (
                             <Button className="hover:bg-green-400" onClick={markCompleteHandler}>
-                                <CheckCircle2 className='text-white' />
+                                <CheckCircle2 className='' />
                                 <span>Completed</span>
                             </Button>
                         ) : (
@@ -133,7 +133,7 @@ const CourseProgress = () => {
                                             {
                                                 isLectureCompleted(lecture._id) ? (
                                                     <CheckCircle2 size={24} className="text-green-500 mr-2" />
-                                                ) : (
+                                                  ) : (
                                                     <CirclePlay size={24} className="text-blue-500 mr-2" />
                                                 )
                                             }
