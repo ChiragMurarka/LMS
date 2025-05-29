@@ -77,3 +77,51 @@ export const AdminRoute =({children})=>{
     }
     return children;
 }
+
+export const SuperAdminGuard=({children})=>{
+  const {user,isAuthenticated}=useSelector(store=>store.auth);
+
+  if(!isAuthenticated){
+    return <Navigate to="/login"/>
+  }
+
+  if(!user){
+    return null;      //renders nothing until user is fetched
+  }
+
+  if(user.role==="superadmin"){
+    return <Navigate to="/superadmin/dashboard"/>
+  }
+  return children;
+}
+
+
+export const ChatRoute=({children})=>{
+  const {user,isAuthenticated}=useSelector(store=>store.auth);
+
+
+  const params=useParams();
+  const {courseId}=params;
+
+  
+  const { data, isLoading, isError, refetch } = useGetCourseDetailsWithPurchaseStatusQuery({courseId});
+  
+  if(!isAuthenticated){
+    return <Navigate to="/login/"/>
+  }
+
+  if(isLoading){
+    return <LoadingSpinner/>
+  }
+  if(isError){
+    return <h1>Error getting Course Progress</h1>
+  }
+
+  const coursePurchased =data?.purchased;
+  console.log(data);
+  if (!coursePurchased && user.role!=="superadmin") {
+    return <Navigate to={`/course-details/${courseId}`} />;
+  }
+  
+  return children ;
+}

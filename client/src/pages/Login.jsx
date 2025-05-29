@@ -95,7 +95,7 @@ const Login = () => {
     if (loginError) {
       toast.error(loginError.data.message || "Login failed")
     }
-  }, [loginIsSuccess, registerIsSuccess, loginError, registerError]) //triggers if any of these changes
+  }, [loginIsSuccess, registerIsSuccess, loginError, registerError,loginData]) //triggers if any of these changes
 
 
   return (

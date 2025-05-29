@@ -20,7 +20,7 @@ import EditLecture from './pages/admin/lecture/EditLecture'
 import CourseDetail from './pages/student/CourseDetail'
 import CourseProgress from './pages/student/CourseProgress'
 import SearchPage from './pages/student/SearchPage'
-import { AdminRoute, AuthenticatedUser, CoursePurchased, ProtectedRoute } from './components/ProtectedRoutes'
+import { AdminRoute, AuthenticatedUser, ChatRoute, CoursePurchased, ProtectedRoute, SuperAdminGuard } from './components/ProtectedRoutes'
 import { Toaster } from 'sonner'
 import PurchaseCourseProtectedRoute from './components/PurchaseCourseProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -28,6 +28,12 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import Discussion from './pages/student/Discussion'
 import Course from './pages/student/Course'
 import { Disc } from 'lucide-react'
+import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard'
+import Users from './pages/superadmin/Users'
+import Instructors from './pages/superadmin/Instructors'
+import Revenue from './pages/superadmin/Revenue'
+import AllCourses from './pages/superadmin/AllCourses'
+
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -41,55 +47,88 @@ const appRouter = createBrowserRouter([
       {
         path: "/",
         element:
-          <>
-            <HeroSection />
-            <Courses />
-          </>
+          <SuperAdminGuard>
+            <>
+              <HeroSection />
+              <Courses />
+            </>
+          </SuperAdminGuard>
       },
       {
+        path:"/superadmin/dashboard",
+        element:<SuperAdminDashboard/>
+      }
+      ,
+      {
         path: "login",
-        element: <AuthenticatedUser>
-          <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
-            <Login />
-          </GoogleOAuthProvider>
-        </AuthenticatedUser>
+        element:
+            <AuthenticatedUser>
+              <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
+                <Login />
+              </GoogleOAuthProvider>
+            </AuthenticatedUser>
       },
       {
         path: "my-learning",
-        element: <ProtectedRoute><MyLearning /></ProtectedRoute>
+        element:
+          <SuperAdminGuard>
+            <ProtectedRoute>
+              <MyLearning />
+            </ProtectedRoute>
+          </SuperAdminGuard>
       },
       {
         path: 'profile',
-        element: <ProtectedRoute><Profile /></ProtectedRoute>
+        element:
+          <SuperAdminGuard>
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          </SuperAdminGuard>
       },
       {
         path: 'course/search',
-        element: <SearchPage />
+        element:
+          <SuperAdminGuard>
+            <SearchPage />
+          </SuperAdminGuard>
       },
       {
         path: 'course-details/:courseId',
-        element: <ProtectedRoute><CourseDetail /></ProtectedRoute>
+        element:
+          <SuperAdminGuard>
+            <ProtectedRoute>
+              <CourseDetail />
+            </ProtectedRoute>
+          </SuperAdminGuard>
       },
       {
         path: "course-progress/:courseId",
         element:
-          <CoursePurchased>
-            <CourseProgress />
-          </CoursePurchased>
+          <SuperAdminGuard>
+            <CoursePurchased>
+              <CourseProgress />
+            </CoursePurchased>
+          </SuperAdminGuard>
       },
       {
-        path:"discussion-forum/:courseId/user/:userId",
+        path: "discussion-forum/:courseId/user/:userId",
         element:
-        <CoursePurchased>
-          <Discussion/>
-        </CoursePurchased>
+          <ChatRoute>
+            <Discussion />
+          </ChatRoute>
       },
 
       //admin routes 
 
       {
         path: "admin",
-        element: <AdminRoute><Sidebar /></AdminRoute>,        //admin route will apply to all below components
+        element:
+          <SuperAdminGuard>
+            <AdminRoute>
+              <Sidebar />
+            </AdminRoute>
+          </SuperAdminGuard>,        //admin route will apply to all below components
         children: [
           {
             path: "dashboard",
@@ -117,6 +156,30 @@ const appRouter = createBrowserRouter([
           },
         ]
       },
+
+      //super Admin
+      {
+        path:"superadmin",
+        element:<MainLayout/>,
+        children:[
+          {
+            path:"users",
+            element:<Users/>
+          },
+          {
+            path:"instructors",
+            element:<Instructors/>
+          },
+          {
+            path:"revenue",
+            element:<Revenue/>
+          },
+          {
+            path:"courses",
+            element:  <AllCourses/>
+          }
+        ]
+      }
     ]
   }
 ])

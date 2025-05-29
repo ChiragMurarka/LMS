@@ -22,7 +22,7 @@ const userSchema=new mongoose.Schema({
     ,
     role:{
         type:String,
-        enum:["instructor","student"],
+        enum:["instructor","student","superadmin"],
         default:"student"
     },
     //courses can be many therfore array
@@ -35,6 +35,11 @@ const userSchema=new mongoose.Schema({
     photoUrl:{
         type:String,
         default:""
+    },
+    chatAccess:{
+        type:String,
+        enum:["ban","unban"],
+        default:"unban"
     }
 },{timestamps:true})
 
