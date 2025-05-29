@@ -14,6 +14,25 @@ export const ProtectedRoute=({children})=>{
     return children;
 }
 
+
+export const StudentProtectedRoute=({children})=>{
+  const {user,isAuthenticated}=useSelector(store=>store.auth);
+
+  if(!isAuthenticated){
+    return <Navigate to="/login/"/>
+  }
+  if(!user) return null ;
+
+  
+  if(user.role!=="student"){
+    return <Navigate to="/"/>
+  }
+
+
+  return children      ;
+}
+
+
 export const CoursePurchased=({children})=>{
   const {isAuthenticated}=useSelector(store=>store.auth);
 

@@ -297,7 +297,7 @@ const CourseTab = () => {
                     </div>
                 </div>
             </CardContent>
-        </Card>
+        </Card> 
     )
 }
 

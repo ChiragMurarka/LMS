@@ -14,10 +14,25 @@ export const superAdminApi=createApi({
                 url:"getAllCourses",                 //register gets attached to USER_API at last
                 method:"GET"
             })
+        }),
+        sendInstructorRequest:builder.mutation({
+            query:({data})=>({
+                url:"req/instructor",
+                method:"POST",
+                body:data
+            })
+        }),
+        getPendingRequest:builder.query({
+            query:()=>({
+                url:"req/getPendingRequests",
+                method:"GET"
+            })
         })   
     })
 });
 
 export const {
-    useGetDashboardDetailsQuery
+    useGetDashboardDetailsQuery,
+    useSendInstructorRequestMutation    ,
+    useGetPendingRequestQuery
 }=superAdminApi;

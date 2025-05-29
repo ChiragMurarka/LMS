@@ -20,7 +20,7 @@ import EditLecture from './pages/admin/lecture/EditLecture'
 import CourseDetail from './pages/student/CourseDetail'
 import CourseProgress from './pages/student/CourseProgress'
 import SearchPage from './pages/student/SearchPage'
-import { AdminRoute, AuthenticatedUser, ChatRoute, CoursePurchased, ProtectedRoute, SuperAdminGuard, SuperAdminProtectedRoute } from './components/ProtectedRoutes'
+import { AdminRoute, AuthenticatedUser, ChatRoute, CoursePurchased, ProtectedRoute, StudentProtectedRoute, SuperAdminGuard, SuperAdminProtectedRoute } from './components/ProtectedRoutes'
 import { Toaster } from 'sonner'
 import PurchaseCourseProtectedRoute from './components/PurchaseCourseProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -117,81 +117,81 @@ const appRouter = createBrowserRouter([
       {
         path: "user/careers",
         element:
-          <ProtectedRoute>
-            <Careers />
-          </ProtectedRoute>
+          <StudentProtectedRoute>
+            <Careers/>
+          </StudentProtectedRoute>
       }
       ,
 
-      //admin routes 
+//admin routes 
 
+{
+  path: "admin",
+    element:
+  <SuperAdminGuard>
+    <AdminRoute>
+      <Sidebar />
+    </AdminRoute>
+  </SuperAdminGuard>,        //admin route will apply to all below components
+    children: [
       {
-        path: "admin",
-        element:
-          <SuperAdminGuard>
-            <AdminRoute>
-              <Sidebar />
-            </AdminRoute>
-          </SuperAdminGuard>,        //admin route will apply to all below components
-        children: [
-          {
-            path: "dashboard",
-            element: <Dashboard />
-          },
-          {
-            path: "course",
-            element: <CourseTable />
-          },
-          {
-            path: "course/create",
-            element: <AddCourse />
-          },
-          {
-            path: "course/:courseId",                           //dynamic routing check CoureTable.jsx edit button
-            element: <EditCourse />
-          },
-          {
-            path: "course/:courseId/lecture",
-            element: <CreateLecture />
-          },
-          {
-            path: "course/:courseId/lecture/:lectureId",
-            element: <EditLecture />
-          },
-        ]
+        path: "dashboard",
+        element: <Dashboard />
       },
-
-      //super Admin
       {
-        path: "superadmin",
-        element:
-          <SuperAdminProtectedRoute>
-            <MainLayout />
-          </SuperAdminProtectedRoute>,
-        children: [
-          {
-            path: "dashboard",
-            element: <SuperAdminDashboard />
-          }
-          ,
-          {
-            path: "users",
-            element: <Users />
-          },
-          {
-            path: "instructors",
-            element: <Instructors />
-          },
-          {
-            path: "revenue",
-            element: <Revenue />
-          },
-          {
-            path: "courses",
-            element: <AllCourses />
-          }
-        ]
+        path: "course",
+        element: <CourseTable />
+      },
+      {
+        path: "course/create",
+        element: <AddCourse />
+      },
+      {
+        path: "course/:courseId",                           //dynamic routing check CoureTable.jsx edit button
+        element: <EditCourse />
+      },
+      {
+        path: "course/:courseId/lecture",
+        element: <CreateLecture />
+      },
+      {
+        path: "course/:courseId/lecture/:lectureId",
+        element: <EditLecture />
+      },
+    ]
+},
+
+//super Admin
+{
+  path: "superadmin",
+    element:
+  <SuperAdminProtectedRoute>
+    <MainLayout />
+  </SuperAdminProtectedRoute>,
+    children: [
+      {
+        path: "dashboard",
+        element: <SuperAdminDashboard />
       }
+      ,
+      {
+        path: "users",
+        element: <Users />
+      },
+      {
+        path: "instructors",
+        element: <Instructors />
+      },
+      {
+        path: "revenue",
+        element: <Revenue />
+      },
+      {
+        path: "courses",
+        element: <AllCourses />
+      }
+    ]
+}
     ]
   }
 ])

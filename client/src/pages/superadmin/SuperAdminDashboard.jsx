@@ -13,13 +13,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { BellIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useGetDashboardDetailsQuery } from "@/features/api/superAdminApi";
+import { useGetDashboardDetailsQuery, useGetPendingRequestQuery } from "@/features/api/superAdminApi";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 const SuperAdminDashboard = () => {
 
 
     const {data ,isLoading}=useGetDashboardDetailsQuery();
+
+    const {data:request,isLoading:requestIsLoading,isSuccess}=useGetPendingRequestQuery();
+
+
     const chartData = [
         { month: "January", desktop: 186, mobile: 80 },
         { month: "February", desktop: 305, mobile: 200 },
@@ -29,8 +33,10 @@ const SuperAdminDashboard = () => {
         { month: "June", desktop: 214, mobile: 140 },
     ];
 
-    
     if(isLoading) return <LoadingSpinner/>
+    if(requestIsLoading) return <LoadingSpinner/>
+
+    const {requests}=request;
     const {revenue,totalcourses,users,instructors}=data?.data              ;
     return (
         <div className="p-6">
@@ -78,35 +84,15 @@ const SuperAdminDashboard = () => {
                         <div className="flex gap-1 items-center mb-6">
                             <CardTitle className="text-2xl">Pending Aprrovals</CardTitle>
                             <BellIcon className="mt-2 ml-2" />
-                            <div className="bg-red-600 px-2 rounded-full mt-2 ml-2">4</div>
+                            <div className="bg-red-600 px-2 rounded-full mt-2 ml-2">{requests.length}</div>
                         </div>
 
                         <div className="max-h-48 overflow-auto space-y-3">
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
-                            <div>hello</div>
+                            {
+                                requests.map((req,idx)=>(
+                                        <div>hello</div>
+                                ))
+                            }
                         </div>
                     </CardHeader>
                 </Card>

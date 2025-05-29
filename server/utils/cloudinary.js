@@ -28,10 +28,38 @@ export const deleteMediaFromCloudinary = async (publicId) => {
 }
 
 
-export const deleteVideoFromCloudinary= async(publicId)=>{
+export const deleteVideoFromCloudinary = async (publicId) => {
     try {
-        await cloudinary.uploader.destroy(publicId,{resource_type:"video"});
+        await cloudinary.uploader.destroy(publicId, { resource_type: "video" });
     } catch (error) {
         console.log(error);
     }
 }
+
+
+
+export const uploadPdf = async (filePath, originalFilename) => {
+    try {
+        const result = await cloudinary.uploader.upload(filePath, {
+            resource_type: "raw",
+            use_filename: true,
+            unique_filename: true,                        //same file name gets converted to different name when store on cloudinary
+            public_id: `${originalFilename}`   ,          //for pdf we need to do this also so that it stored in pdf format
+            folder: "resumes" // optional folder
+        });
+        return result;
+    } catch (error) {
+        console.log("Error uploading PDF:", error);
+        throw error;
+    }
+};
+
+
+export const deletePdfFromCloudinary = async (publicId) => {
+    try {
+        await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
