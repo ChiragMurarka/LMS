@@ -20,7 +20,7 @@ import EditLecture from './pages/admin/lecture/EditLecture'
 import CourseDetail from './pages/student/CourseDetail'
 import CourseProgress from './pages/student/CourseProgress'
 import SearchPage from './pages/student/SearchPage'
-import { AdminRoute, AuthenticatedUser, ChatRoute, CoursePurchased, ProtectedRoute, SuperAdminGuard } from './components/ProtectedRoutes'
+import { AdminRoute, AuthenticatedUser, ChatRoute, CoursePurchased, ProtectedRoute, SuperAdminGuard, SuperAdminProtectedRoute } from './components/ProtectedRoutes'
 import { Toaster } from 'sonner'
 import PurchaseCourseProtectedRoute from './components/PurchaseCourseProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -33,6 +33,7 @@ import Users from './pages/superadmin/Users'
 import Instructors from './pages/superadmin/Instructors'
 import Revenue from './pages/superadmin/Revenue'
 import AllCourses from './pages/superadmin/AllCourses'
+import Careers from './pages/student/Careers'
 
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -55,18 +56,13 @@ const appRouter = createBrowserRouter([
           </SuperAdminGuard>
       },
       {
-        path:"/superadmin/dashboard",
-        element:<SuperAdminDashboard/>
-      }
-      ,
-      {
         path: "login",
         element:
-            <AuthenticatedUser>
-              <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
-                <Login />
-              </GoogleOAuthProvider>
-            </AuthenticatedUser>
+          <AuthenticatedUser>
+            <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>  {/*google oauth components used in Login.jsx require GoogleOAuthProvider */}
+              <Login />
+            </GoogleOAuthProvider>
+          </AuthenticatedUser>
       },
       {
         path: "my-learning",
@@ -118,6 +114,14 @@ const appRouter = createBrowserRouter([
             <Discussion />
           </ChatRoute>
       },
+      {
+        path: "user/careers",
+        element:
+          <ProtectedRoute>
+            <Careers />
+          </ProtectedRoute>
+      }
+      ,
 
       //admin routes 
 
@@ -159,24 +163,32 @@ const appRouter = createBrowserRouter([
 
       //super Admin
       {
-        path:"superadmin",
-        element:<MainLayout/>,
-        children:[
+        path: "superadmin",
+        element:
+          <SuperAdminProtectedRoute>
+            <MainLayout />
+          </SuperAdminProtectedRoute>,
+        children: [
           {
-            path:"users",
-            element:<Users/>
+            path: "dashboard",
+            element: <SuperAdminDashboard />
+          }
+          ,
+          {
+            path: "users",
+            element: <Users />
           },
           {
-            path:"instructors",
-            element:<Instructors/>
+            path: "instructors",
+            element: <Instructors />
           },
           {
-            path:"revenue",
-            element:<Revenue/>
+            path: "revenue",
+            element: <Revenue />
           },
           {
-            path:"courses",
-            element:  <AllCourses/>
+            path: "courses",
+            element: <AllCourses />
           }
         ]
       }

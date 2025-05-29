@@ -13,8 +13,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { BellIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useGetDashboardDetailsQuery } from "@/features/api/superAdminApi";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const SuperAdminDashboard = () => {
+
+
+    const {data ,isLoading}=useGetDashboardDetailsQuery();
     const chartData = [
         { month: "January", desktop: 186, mobile: 80 },
         { month: "February", desktop: 305, mobile: 200 },
@@ -24,18 +29,21 @@ const SuperAdminDashboard = () => {
         { month: "June", desktop: 214, mobile: 140 },
     ];
 
+    
+    if(isLoading) return <LoadingSpinner/>
+    const {revenue,totalcourses,users,instructors}=data?.data              ;
     return (
         <div className="p-6">
             <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {[
-                    { label: "Total Users", value: "1,234",name:"users" },
-                    { label: "Total instructors", value: "87",name:"instructors" },
-                    { label: "Revenue", value: "$12,340",name:"revenue" },
-                    { label: "Courses", value: "43",name:"courses" },
-                ].map((stat) => (
-                    <Card className="">
+                    { label: "Total Users", value:users.length,name:"users" },
+                    { label: "Total instructors", value: instructors.length,name:"instructors" },
+                    { label: "Revenue", value:`₹${revenue}`,name:"revenue" },
+                    { label: "Courses", value: totalcourses,name:"courses" },
+                ].map((stat ,idx) => (
+                    <Card className="" key={idx}>
                         <CardHeader>
                             <CardTitle className="text-2xl">{stat.label}</CardTitle>
                             <CardDescription className="text-xl">{stat.value}</CardDescription>

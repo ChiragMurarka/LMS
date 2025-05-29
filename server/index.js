@@ -8,6 +8,7 @@ import courseRoute from "./routes/course.route.js"
 import mediaRoute from "./routes/media.route.js"
 import coursePurchase from "./routes/coursePurchase.route.js"
 import messageRoute from "./routes/messages.route.js"
+import superAdminRoute from "./routes/superAdmin.route.js"
 import Razorpay from "razorpay";
 import courseProgressRoute from "./routes/courseProgress.route.js"
 import http from 'http'
@@ -73,6 +74,7 @@ app.use("/api/v1/course",courseRoute);
 app.use("/api/v1/purchase",coursePurchase);
 app.use("/api/v1/progress",courseProgressRoute);
 app.use("/api/v1/message",messageRoute)        ;
+app.use("/api/v1/superadmin",superAdminRoute);
 
 
 

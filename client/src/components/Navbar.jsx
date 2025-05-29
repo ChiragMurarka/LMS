@@ -30,7 +30,7 @@ const Navbar = () => {
     <div className='h-16 dark:bg-[#0A0A0A] bg-white border-b dark:border-b-gray-800 border-b-gray-200 fixed top-0 left-0 right-0 duration-300 z-10'>
       {/* Desktop*/}
       <div className='max-w-7xl mx-auto hidden md:flex justify-between items-center gap-2 h-full'>
-        <Link to="">
+        <Link to="/">
           <div className='flex items-center gap-2'>
             <School size={"30"} />
             <h1 className='hidden md:block font-extrabold text-2xl'>
@@ -52,13 +52,17 @@ const Navbar = () => {
                 <DropdownMenuContent className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild><Link to="my-learning">My Learning</Link></DropdownMenuItem>
-                  <DropdownMenuItem asChild><Link to="profile">Edit Profile</Link></DropdownMenuItem>
+                  {
+                    user?.role !== "superadmin" && <>
+                      <DropdownMenuItem asChild><Link to="my-learning">My Learning</Link></DropdownMenuItem>
+                      <DropdownMenuItem asChild><Link to="profile">Edit Profile</Link></DropdownMenuItem>
+                    </>
+                  }
                   <DropdownMenuItem onClick={logoutHandler}>Log out</DropdownMenuItem>
                   {
-                    user?.role === "instructor" && <>
+                    user?.role === "instructor" ? <>
                       <DropdownMenuLabel><Link to="/admin/dashboard">Dashboard</Link></DropdownMenuLabel>
-                    </>
+                    </> : user?.role==="student" && <DropdownMenuLabel><Link to="/user/careers">Careers</Link></DropdownMenuLabel>
                   }
                   <DropdownMenuSeparator />
                 </DropdownMenuContent>
@@ -110,9 +114,9 @@ const MobileNavbar = () => {
       <SheetContent className='flex flex-col'>
         <SheetHeader className='flex flex-row items-centre justify-between mt-2'>
           <SheetTitle>
-              <SheetClose asChild>
-                <Link to="">E-learning</Link>
-              </SheetClose>
+            <SheetClose asChild>
+              <Link to="/">E-learning</Link>
+            </SheetClose>
           </SheetTitle>
           <DarkMode />
         </SheetHeader>
@@ -120,26 +124,34 @@ const MobileNavbar = () => {
         {
           user ? (
             <>
-            <nav className='flex flex-col space-y-4'>
-              <SheetClose asChild>
-                <Link to="my-learning">My learning</Link>
-              </SheetClose>
-              <SheetClose asChild>
-                <Link to="profile">Edit Profile</Link>
-              </SheetClose>
-              <SheetClose asChild>
-                <Link onClick={logoutHandler}>Log out</Link>
-              </SheetClose>
-            </nav>
-            {
-              user?.role === 'instructor' && (
-                <SheetFooter>
-                  <SheetClose asChild>
-                    <Button type="button" onClick={()=>navigate("admin/dashboard")}>Dashboard</Button>
+              <nav className='flex flex-col space-y-4'>
+                {
+                  user?.role !== "superadmin" && <><SheetClose asChild>
+                    <Link to="my-learning">My learning</Link>
                   </SheetClose>
-                </SheetFooter>
-              )
-            }
+                    <SheetClose asChild>
+                      <Link to="profile">Edit Profile</Link>
+                    </SheetClose></>
+                }
+                <SheetClose asChild>
+                  <Link onClick={logoutHandler}>Log out</Link>
+                </SheetClose>
+              </nav>
+              {
+                user?.role === 'instructor' ? (
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="button" onClick={() => navigate("admin/dashboard")}>Dashboard</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                ) :user?.role==="student" && (
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button type="button" onClick={() => navigate("user/careers")}>Careers</Button>
+                    </SheetClose>
+                  </SheetFooter>
+                )
+              }
             </>
           ) : <>
             <SheetClose asChild>

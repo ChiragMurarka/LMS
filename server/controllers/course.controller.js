@@ -398,7 +398,7 @@ export const getPublishedCourse = async (req, res) => {
 export const mylearning = async (req, res) => {
     try {
         const userId = req.id;
-        const purchase =await CoursePurchase.find({ userId: userId, status: "completed" }).populate("courseId");
+        const purchase = await CoursePurchase.find({ userId: userId, status: "completed" }).populate("courseId");
 
         if (!purchase) {
             return res.status(400).json({
@@ -406,9 +406,9 @@ export const mylearning = async (req, res) => {
             })
         }
 
-        console.log(purchase) ;
+        console.log(purchase);
 
-       // purchase =await Course.updateMany()
+        // purchase =await Course.updateMany()
         //const course =await purchase.courseId;
         //console.log(course);
         return res.status(200).json({
@@ -424,42 +424,45 @@ export const mylearning = async (req, res) => {
 }
 
 
-export const searchCourse = async(req,res)=>{
+export const searchCourse = async (req, res) => {
     try {
-        const {query="",categories=[],sortByPrice=""}=req.query;
+        const { query = "", categories = [], sortByPrice = "" } = req.query;
 
         console.log(categories);
-        const searchCriteria={
-            isPublished:true,
-            $or:[
-                {courseTitle:{$regex:query,$options:"i"}},          //if found in courseTitle or subtitle or category thats why or is used
-                {subTitle:{$regex:query,$options:"i"}},             //regex and all is used to match 
-                {category:{$regex:query,$options:"i"}}              //regex is string matching algo in mongodb 
-        ]                                                           //options i means case insensitive there are more ways also
+        const searchCriteria = {
+            isPublished: true,
+            $or: [
+                { courseTitle: { $regex: query, $options: "i" } },          //if found in courseTitle or subtitle or category thats why or is used
+                { subTitle: { $regex: query, $options: "i" } },             //regex and all is used to match 
+                { category: { $regex: query, $options: "i" } }              //regex is string matching algo in mongodb 
+            ]                                                           //options i means case insensitive there are more ways also
         }
 
-        if(categories.length>0){
-            searchCriteria.category={$in:categories};
+        if (categories.length > 0) {
+            searchCriteria.category = { $in: categories };
         }
 
 
-        const sortOptions={};
+        const sortOptions = {};
 
-        if(sortByPrice==="low"){
-            sortOptions.coursePrice=1; //sort by price in ascending order
+        if (sortByPrice === "low") {
+            sortOptions.coursePrice = 1; //sort by price in ascending order
         }
-        else if(sortByPrice==="high"){
-            sortOptions.coursePrice=-1;//sort by price in descending order
+        else if (sortByPrice === "high") {
+            sortOptions.coursePrice = -1;//sort by price in descending order
         }
 
-        let courses=     await Course.find(searchCriteria).sort(sortOptions).populate({path:"creator", select:"name phtoUrl"});
+        let courses = await Course.find(searchCriteria).sort(sortOptions).populate({ path: "creator", select: "name phtoUrl" });
 
         return res.status(200).json({
-            courses:courses||[],
-            success:true,
+            courses: courses || [],
+            success: true,
         })
 
     } catch (error) {
         console.log(error);
     }
 }
+
+
+

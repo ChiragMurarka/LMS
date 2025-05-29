@@ -95,6 +95,22 @@ export const SuperAdminGuard=({children})=>{
   return children;
 }
 
+export const SuperAdminProtectedRoute=({children})=>{
+
+  const {user,isAuthenticated}=useSelector(store=>store.auth);
+  if(!isAuthenticated){
+    return <Navigate to="/login"/>
+  }
+  if(!user){
+    return <LoadingSpinner/>;
+  }
+  if(user.role!=="superadmin"){
+    return <Navigate to="/login"/>
+  }
+
+  return children;
+}
+
 
 export const ChatRoute=({children})=>{
   const {user,isAuthenticated}=useSelector(store=>store.auth);
