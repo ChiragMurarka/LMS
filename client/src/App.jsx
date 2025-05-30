@@ -34,6 +34,7 @@ import Instructors from './pages/superadmin/Instructors'
 import Revenue from './pages/superadmin/Revenue'
 import AllCourses from './pages/superadmin/AllCourses'
 import Careers from './pages/student/Careers'
+import Request from './pages/superadmin/Request'
 
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -189,6 +190,10 @@ const appRouter = createBrowserRouter([
       {
         path: "courses",
         element: <AllCourses />
+      },
+      {
+        path:"request/:reqId",
+        element:<Request />
       }
     ]
 }

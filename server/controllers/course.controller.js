@@ -72,7 +72,7 @@ export const editCourse = async (req, res) => {
                 const publicId = course.courseThumbnail.split("/").pop().split(".")[0];    //getting publicId from public url
                 await deleteMediaFromCloudinary(publicId);                               //delete old image
             }
-            //upload thumbnail from cloudinary
+            //upload thumbnail from cloudinaryz
             courseThumbnail = await uploadMedia(thumbnail.path);
         }
 

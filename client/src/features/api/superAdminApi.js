@@ -27,12 +27,56 @@ export const superAdminApi=createApi({
                 url:"req/getPendingRequests",
                 method:"GET"
             })
-        })   
+        }),
+        getRequestStatus:builder.query({
+            query:()=>({
+                url:"req/getRequestStatus",
+                method:"GET"
+            })
+        }),
+        roleChange:builder.mutation({
+            query:()=>({
+                url:"req/roleChange",
+                method:"POST"
+            })
+        }),
+        getRequestById:builder.query({
+            query:({reqId})=>({
+                url:`req/getRequestById/${reqId}`,
+                method:"GET"
+            })
+        }),
+        rejectRequest:builder.mutation({
+            query:({reqId,msg})=>({
+                url:"req/reject",
+                method:"POST",
+                body:{reqId,msg}
+            })
+        }),
+        acceptRequest:builder.mutation({
+            query:({reqId})=>({
+                url:"req/accept",
+                method:"POST",
+                body:{reqId}
+            })
+        }),
+        deleteRequest:builder.mutation({
+            query:()=>({
+                url:"req/delete",
+                method:"DELETE"
+            })
+        })
     })
 });
 
 export const {
     useGetDashboardDetailsQuery,
     useSendInstructorRequestMutation    ,
-    useGetPendingRequestQuery
+    useGetPendingRequestQuery,
+    useGetRequestStatusQuery,
+    useRoleChangeMutation   ,
+    useGetRequestByIdQuery,
+    useRejectRequestMutation  ,
+    useAcceptRequestMutation  ,
+    useDeleteRequestMutation  ,
 }=superAdminApi;

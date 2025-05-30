@@ -44,8 +44,7 @@ export const uploadPdf = async (filePath, originalFilename) => {
             resource_type: "raw",
             use_filename: true,
             unique_filename: true,                        //same file name gets converted to different name when store on cloudinary
-            public_id: `${originalFilename}`   ,          //for pdf we need to do this also so that it stored in pdf format
-            folder: "resumes" // optional folder
+            public_id: `${originalFilename}`              //for pdf we need to do this also so that it stored in pdf format
         });
         return result;
     } catch (error) {
