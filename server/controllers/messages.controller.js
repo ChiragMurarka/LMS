@@ -6,7 +6,7 @@ import { Message } from "../models/messages.model.js";
 export const getCourseMessage = async (req, res) => {
     try {
         const  courseId = req.params.courseId;
-        const Messages = await Message.find({ courseId }).sort({timestamp:1}).populate("userId");
+        const Messages = await Message.find({ courseId }).sort({timestamp:1}).populate("userId").populate("courseId");
 
         
         res.status(200).json({

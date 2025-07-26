@@ -130,7 +130,7 @@ const Login = () => {
                   value={signupInput.email}
                   onChange={(event) => changeInputHandler(event, "signup")}
                   placeholder="eg. Chirag@gmail.com"
-                  required="true"
+                  required={true}
                 />
               </div>
               <div className="space-y-1">

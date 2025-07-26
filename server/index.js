@@ -45,10 +45,9 @@ io.on('connection', (socket) => {
   console.log('User connected');
 
   socket.on('sendMessage', async ({userId,message,courseId}) => {
-    const saved = (await Message.create({userId,message,courseId}));
-    await saved.populate("userId");//populate because we need photourl name and role 
-    
-    io.emit('receiveMessage', saved);
+    const newMessage=await Message.create({userId,message,courseId});
+    const populatedMessage=await Message.findById(newMessage._id).populate("userId").populate("courseId");    
+    io.emit('receiveMessage', populatedMessage);
   });
 
   socket.on('disconnect', () => {

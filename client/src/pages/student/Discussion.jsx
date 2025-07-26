@@ -8,7 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { useCreateMessageMutation, useGetCourseMessagesQuery } from '@/features/api/messageApi'
-import { MessageCircleWarning, Send, SendHorizonal, Store } from 'lucide-react'
+import { AlertCircle, MessageCircleWarning, Send, SendHorizonal, Store } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { socket } from '../../socket.js'
@@ -21,12 +21,13 @@ const Discussion = () => {
   const courseId = params.courseId;
   const userId = params.userId;
 
-  const loggedInUser=useSelector(store=>store.auth);
+  const loggedInUser = useSelector(store => store.auth);
 
-  const SUPER_ADMIN_ID=import.meta.env.VITE_SUPER_ADMIN_ID;
-  console.log(loggedInUser);
+  const SUPER_ADMIN_ID = import.meta.env.VITE_SUPER_ADMIN_ID;
+  //console.log(loggedInUser);
 
 
+  const banned = false;
   const [input, setInput] = useState("");
   const [newMessages, setNewMessages] = useState([]);
 
@@ -39,6 +40,7 @@ const Discussion = () => {
 
   const { data: getMessagesData, isLoading: getCourseMessageIsLoading, isSuccess: getCourseMessageIsSuccess, refetch } = useGetCourseMessagesQuery({ courseId });
 
+  console.log(getMessagesData);
   useEffect(() => {
     socket.on('receiveMessage', (msg) => {                              //receiving messages sent over connection
       setNewMessages((prev) => [...prev, msg]);
@@ -103,7 +105,10 @@ const Discussion = () => {
                                 loggedInUser.user._id === SUPER_ADMIN_ID ? (message.userId.email) : (message.userId.name)
                               }
                             </span>
-                            <Badge className="bg">{message.userId.role}</Badge>
+                            <Badge className="bg">{
+
+                              message.userId._id === message.courseId.creator ? <>Instructor</> : <>Student</>
+                            }</Badge>
                           </div>
                           <div className='text-semibold max-w-[450px] break-words'>
                             {message.message}
@@ -127,11 +132,13 @@ const Discussion = () => {
                               </Avatar>
                               {/* if superadmin is logged in he sees the email address of person so that he can ban or unban the person */}
                               <span className='font-semibold text-base '>
-                              {
-                                loggedInUser.user._id === SUPER_ADMIN_ID ? (message.userId.email) : (message.userId.name)
-                              }
+                                {
+                                  loggedInUser.user._id === SUPER_ADMIN_ID ? (message.userId.email) : (message.userId.name)
+                                }
                               </span>
-                              <Badge className="bg">{message?.userId?.role}</Badge>
+                              <Badge className="bg">{
+                                message.userId._id === message.courseId.creator ? <>Instructor</> : <>Student</>
+                              }</Badge>
                             </div>
                             <div className='text-base max-w-[450px] break-words'>
                               {message.message}
@@ -152,20 +159,31 @@ const Discussion = () => {
             <div ref={scrollEndRef}></div>
           </ScrollArea>
         </CardContent>
-        <CardFooter className="flex pt-2 ">
-          <Input
-            placeholder="Type your message here"
-            className="rounded-r-none focus:outline-none"
-            onChange={(e) => setInput(e.target.value)}
-            type="text"
-            value={input}
-            onKeyDown={(e) => {
-              if (e.key === "Enter")
-                sendMessageHandler()
-            }}
-          />
-          <Button className="rounded-l-none" onClick={() => sendMessageHandler()}><Send /></Button>
-        </CardFooter>
+        {
+          banned ?
+            <>
+              <CardFooter className="flex gap-2">
+                <AlertCircle className='text-red-700' />
+                <h1 className='text-l font-semibold text-red-700'>You have been Banned from Discussion for not adhering to community guidelines</h1>
+              </CardFooter>
+            </> :
+            <>
+              <CardFooter className="flex pt-2 ">
+                <Input
+                  placeholder="Type your message here"
+                  className="rounded-r-none focus:outline-none"
+                  onChange={(e) => setInput(e.target.value)}
+                  type="text"
+                  value={input}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter")
+                      sendMessageHandler()
+                  }}
+                />
+                <Button className="rounded-l-none" onClick={() => sendMessageHandler()}><Send /></Button>
+              </CardFooter>
+            </>
+        }
       </Card>
     </div>
 

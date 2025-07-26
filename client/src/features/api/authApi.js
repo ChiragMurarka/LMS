@@ -39,7 +39,6 @@ export const authApi=createApi({
             async onQueryStarted(arg,{queryFulfilled,dispatch}){
                 try {
                     const result =await queryFulfilled;
-                    // console.log(result.data)
                     dispatch(userLoggedIn({user:result.data.user}));    //restore the store with user and isauthenticated
                 } catch (error) {
                     console.log(error);

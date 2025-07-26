@@ -157,12 +157,12 @@ export const SuperAdminProtectedRoute = ({ children }) => {
 }
 
 
-export const ChatRoute = ({ children }) => {
+export const  ChatRoute = ({ children }) => {
   const { user, isAuthenticated } = useSelector(store => store.auth);
 
 
   const params = useParams();
-  const { courseId } = params;
+  const { courseId ,userId} = params;
 
 
   const { data, isLoading, isError, refetch } = useGetCourseDetailsWithPurchaseStatusQuery({ courseId });
@@ -179,8 +179,13 @@ export const ChatRoute = ({ children }) => {
   }
 
   const coursePurchased = data?.purchased;
-  console.log(data);
-  if (!coursePurchased && user.role !== "superadmin") {
+  const instructorId=data.course.creator._id ;
+
+  if(user._id!==userId)
+  {
+   return <Navigate to={`/course-details/${courseId}`} />;
+  }
+  if (!coursePurchased && user.role !== "superadmin" && userId!==instructorId) {
     return <Navigate to={`/course-details/${courseId}`} />;
   }
 

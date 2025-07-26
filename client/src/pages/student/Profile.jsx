@@ -13,61 +13,66 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 
 const Profile = () => {
 
-    const [isDialogOpen , setIsDialogOpen]=useState(false);
-    const [name,setName]=useState("");
-    const [profilePhoto,setProfilePhoto]=useState("");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [name, setName] = useState("");
+    const [profilePhoto, setProfilePhoto] = useState("");
 
 
-    const { data, isLoading,refetch } = useLoadUserQuery();
+    const { data, isLoading, refetch } = useLoadUserQuery();
 
-    const [updateUser ,{data:updateUserData,isLoading:updateIsLoading,error ,isSuccess,isError}]=useUpdateUserMutation();   //updateUser is defined in useUpdateUserMutation
+    const [updateUser, { data: updateUserData, isLoading: updateIsLoading, error, isSuccess, isError }] = useUpdateUserMutation();   //updateUser is defined in useUpdateUserMutation
 
-    const changeHandler=(e)=>{
-        const file=e.target.files?.[0];
-        if(file)setProfilePhoto(file);
+    const changeHandler = (e) => {
+        const file = e.target.files?.[0];
+        if (file) setProfilePhoto(file);
     }
 
-    const updateUserHandler=async()=>{
+    const updateUserHandler = async () => {
         //console.log(name,profilePhoto);
-        const formData=new FormData();
-        formData.append("name",name);
-        formData.append("profilePhoto",profilePhoto);
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("profilePhoto", profilePhoto);
         await updateUser(formData);
         setIsDialogOpen(false);
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         refetch();
-    },[])
-    
-    const user=data && data.user;
-    
-    
-    useEffect(()=>{
-        if(isSuccess){
+    }, [])
+
+
+
+
+    useEffect(() => {
+        if (isSuccess) {
             refetch();  //after updating the profile data useLoadUserQuery() is called again
-            toast.message(data.message||"Profile Updated Successfully");
+            toast.message(data.message || "Profile Updated Successfully");
         }
-        if(isError)
-            toast.error(error.message||"Problem Updating Profile");
-    },[error,updateUserData ,isSuccess,isError])
+        if (isError)
+            toast.error(error.message || "Problem Updating Profile");
+    }, [error, updateUserData, isSuccess, isError])
+
+
     
-    
-    useEffect(()=>{
+
+    if (isLoading)
+        return <><LoadingSpinner /></>
+
+    const user = data && data.user;
+
+    useEffect(() => {
+        if(user){
         setName(user.name);
-    },[user])
+        }
+    }, [user])
 
-    if(isLoading)
-        return <><LoadingSpinner/></>
-
-
-    return (    
+    return (
         <div className='max-w-4xl mx-auto px-4 my-24'>
             <h1 className='font-bold text-2xl text-center md:text-left'>Profile</h1>
             <div className='flex flex-col md:flex-row items-center md:items-start gap-8 my-5'>
                 <div className='flex flex-col items-center'>
                     <Avatar className="h-24 w-24 md:h-32 md:w-32 mb-4">
-                        <AvatarImage src={user && user.photoUrl||"https://github.com/shadcn.png"} alt='@shadcn' />
+                        <AvatarImage src={user && user.photoUrl || "https://github.com/shadcn.png"} alt='@shadcn' />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                 </div>
@@ -86,7 +91,7 @@ const Profile = () => {
                     </div>
                     <div className='mb-2'>
                         <h1 className='font-semibold text-gray-900 dark:text-gray-100'>
-                            Role:  
+                            Role:
                             <span className='font-normal text-gray-700 dark:text-gray-300 ml-1'>{user && user.role.toUpperCase()}</span>
                         </h1>
                     </div>
@@ -104,15 +109,15 @@ const Profile = () => {
                             <div className='grid gap-4 py-4'>
                                 <div className='grid grid-cols-4 items-center gap-4'>
                                     <Label>Name</Label>
-                                    <Input 
-                                    value={name}
-                                    onChange={(e)=>setName(e.target.value)}
-                                    type="text" placeholder="Name" className="col-span-3" />
+                                    <Input
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        type="text" placeholder="Name" className="col-span-3" />
                                 </div>
                                 <div className='grid grid-cols-4 items-center gap-4'>
                                     <Label>Profile Photo</Label>
-                                    <Input 
-                                    onChange={changeHandler}type="file" accept="image/*" className="col-span-3" />
+                                    <Input
+                                        onChange={changeHandler} type="file" accept="image/*" className="col-span-3" />
                                 </div>
                             </div>
                             <DialogFooter>
@@ -136,10 +141,10 @@ const Profile = () => {
                 <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5'>
                     {
                         user && user.enrolledCourses.length === 0 ? (<h1>You haven't enrolled in any Courses yet</h1>) : (
-                        user && user.enrolledCourses.map((course, index) => <Course course={course} key={course._id} />)
+                            user && user.enrolledCourses.map((course, index) => <Course course={course} key={course._id} />)
                         )
                     }
-                </div>  
+                </div>
             </div>
         </div>
     )
